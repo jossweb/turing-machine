@@ -1,6 +1,8 @@
 # Format : (q,Z)->(p, Y, R)
 
 (q0, a)->(q1, X, R)
+(q1, a)->(q1, a, R)
 (q1, b)->(q2, Y, R)
+(q2, b)->(q2, b, R)
 (q2, c)->(q3, Z, R)
 q3*

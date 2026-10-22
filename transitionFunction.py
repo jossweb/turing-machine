@@ -11,7 +11,7 @@ def get_value(raw_text, preindex):
 
 def parse_final_transition_file(raw_line):
     if ((raw_line.strip()[0] == "q") and (raw_line.strip()[1:len(raw_line)-1].isdigit())):
-        return raw_line
+        return raw_line[:len(raw_line)-1]
     else:
         raise ValueError(f"{raw_line} is not a valid end state")
 
@@ -56,7 +56,6 @@ def parse_transition_file(file_path):
 
     return (final_state, transitions)
 
-
 class Transition:
     def __init__(self, start_state, start_value, end_state, end_value, mouvement):
         self.start_state = self.valid_state(start_state)
@@ -72,7 +71,7 @@ class Transition:
             raise ValueError(f"{state} is not a valid state")
     def valid_value(self, value):
         if(len(value.strip())==1 and value.strip().isalpha()):
-            return value
+            return value.strip()
         else:
             raise ValueError(f"{value} is not a valid value")
     def valid_mouvement(self, mouvement):
@@ -83,3 +82,25 @@ class Transition:
 
     def print_transition(self):
         print(f"({self.start_state}, {self.start_value})->({self.end_state}, {self.end_value}, {self.mouvement})")
+
+
+def research_transition(transitons: list[Transition], start_state, start_value):
+    for transition in transitons:
+        if((transition.start_state == start_state)and(transition.start_value == start_value)):
+            return transition
+
+    return None
+
+
+def appli_transition(transition: Transition, word, index):
+    word = word[:index] + transition.end_value + word[index + 1:]
+    if(transition.mouvement=="L"):
+        index -= 1
+    elif(transition.mouvement=="R"):
+        index += 1
+
+    if(index<3):
+        word = " " + word
+        index = 3
+
+    return(word, index, transition.end_state)
