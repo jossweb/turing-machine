@@ -70,6 +70,8 @@ class Transition:
         else:
             raise ValueError(f"{state} is not a valid state")
     def valid_value(self, value):
+        if(value.strip()=="B"): # B means Blank by convention
+            return " "
         if(len(value.strip())==1 and value.strip().isalpha()):
             return value.strip()
         else:
@@ -102,5 +104,7 @@ def appli_transition(transition: Transition, word, index):
     if(index<3):
         word = " " + word
         index = 3
+    elif index >= len(word):
+        word = word + " "
 
     return(word, index, transition.end_state)

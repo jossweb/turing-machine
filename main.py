@@ -2,7 +2,6 @@ from transitionFunction import parse_transition_file, research_transition, appli
 from time import sleep
 import os
 
-size_ligne = os.get_terminal_size().columns
 
 title = """ 
  ▄▄▄▄▄▄▄▄▄▄▄  ▄         ▄  ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄▄  ▄▄        ▄  ▄▄▄▄▄▄▄▄▄▄▄       ▄▄       ▄▄  ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄▄  ▄         ▄  ▄▄▄▄▄▄▄▄▄▄▄  ▄▄        ▄  ▄▄▄▄▄▄▄▄▄▄▄ 
@@ -56,7 +55,8 @@ title_tiny="""
 █   █ █   █ █     █   █  █  █  ██ █     
 █   █ █   █  ███  █   █ ███ █   █ █████ 
 """
-def print_console(s, index, state, value, ending=False, ending_status=False):
+def print_console(s, index, state, value, phase, ending=False, ending_status=False):
+    size_ligne = os.get_terminal_size().columns
     print("\033[2J\033[H", end="")
     print(("\n" + "░"*size_ligne)*3)
     if size_ligne > 180:
@@ -66,7 +66,7 @@ def print_console(s, index, state, value, ending=False, ending_status=False):
     else:
         print(title_tiny)
     print(("░" * size_ligne) * 3)
-    print(f"   state : {state}   value : {value}")
+    print(f"   state : {state}   value : {value}   phase : n°{phase}")
     print("░"*size_ligne+ "\n\n")
     print(s + "\n" + index*" " + "↑")
     if ending:
@@ -79,20 +79,22 @@ end_state, transitions = parse_transition_file("./transitions-functions.joss")
 
 state = "q0"
 index = 3
-word = "   aaabbbccc   "
 phase=0
-while(True):
+
+# configuration
+word = "   aaabbbccc   "
+sleep_time = 0.75
+max_phase = 10000
+
+while(phase<max_phase):
     phase+=1
     transition = research_transition(transitions, state, word[index])
     if(transition):
         word, index, state = appli_transition(transition, word, index)
-        print_console(word, index, state, word[index])
+        print_console(word, index, state, word[index], phase)
     else:
-        print_console(word, index, state, word[index], ending=True, ending_status=(state==end_state))
+        print(f"{state}=={end_state}")
+        print_console(word, index, state, word[index], phase, ending=True, ending_status=(state==end_state))
         exit(0)
 
-    sleep(0.75)
-
-#for i in range (1,9):
-#    print_console("\n\n\n   aaabbbccc\n    " + i*" " + "↑")
-#    time.sleep(2)
+    sleep(sleep_time)
